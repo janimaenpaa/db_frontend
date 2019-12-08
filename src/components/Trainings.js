@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button'
 import ReactTable from 'react-table-v6'
 import moment from 'moment';
 
@@ -24,6 +25,14 @@ const Trainings = () => {
         fetch('https://customerrest.herokuapp.com/gettrainings')
             .then(response => response.json())
             .then(data => setTrainings(data))
+    }
+
+    const deleteTraining = (link) => {
+        if (window.confirm('Are you sure you want to delete training?')) {
+            fetch(`https://customerrest.herokuapp.com/api/trainings/${link}`, { method: 'DELETE' })
+                .then(res => fetchData())
+                .catch(err => console.error(err))
+        }
     }
 
     const columns = [
@@ -68,6 +77,14 @@ const Trainings = () => {
                     </div>
                 )
             }
+        },
+        {
+            sortable: false,
+            filterable: false,
+            width: 100,
+            accessor: 'id',
+            Cell: row => <Button size="small" color="secondary" 
+            onClick={() => deleteTraining(row.value)}>Delete</Button>
         },
     ]
 
