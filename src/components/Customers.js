@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button'
 import ReactTable from 'react-table-v6'
 import 'react-table-v6/react-table.css'
+import AddCustomer from './AddCustomer'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -33,6 +34,18 @@ const Customers = () => {
                 .then(res => fetchData())
                 .catch(err => console.error(err))
         }
+    }
+
+    const saveCustomer = (customer) => {
+        fetch('https://customerrest.herokuapp.com/api/customers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(customer)
+        })
+            .then(res => fetchData())
+            .catch(err => console.error(err))
     }
 
     const columns = [
@@ -82,6 +95,7 @@ const Customers = () => {
                 <Typography component="p">
                     Customers listed.
                 </Typography>
+                <AddCustomer saveCustomer={saveCustomer} />
                 <ReactTable filterable={true} data={customers} columns={columns} defaultPageSize={10} />
             </Paper>
         </div>
