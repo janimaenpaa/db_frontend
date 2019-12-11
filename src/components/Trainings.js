@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button'
 import ReactTable from 'react-table-v6'
 import moment from 'moment';
+import AddTraining from './AddTraining'
+import EditTraining from './EditTraining'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -35,6 +37,30 @@ const Trainings = () => {
         }
     }
 
+    const saveTraining = (training) => {
+        fetch('https://customerrest.herokuapp.com/api/trainings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(training)
+        })
+            .then(res => fetchData())
+            .catch(err => console.error(err))
+    }
+
+    const updateTraining = (training, link) => {
+        fetch(link, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(training)
+        })
+            .then(res => fetchData())
+            .catch(err => console.error(err))
+    }
+
     const columns = [
         {
             Header: 'ID',
@@ -52,10 +78,6 @@ const Trainings = () => {
         {
             Header: 'Duration',
             accessor: 'duration'
-        },
-        {
-            Header: 'Activity',
-            accessor: 'activity'
         },
         {
             Header: 'Activity',
@@ -82,9 +104,15 @@ const Trainings = () => {
             sortable: false,
             filterable: false,
             width: 100,
+            Cell: row => <EditTraining updateTraining={updateTraining} training={row.original} />
+        },
+        {
+            sortable: false,
+            filterable: false,
+            width: 100,
             accessor: 'id',
-            Cell: row => <Button size="small" color="secondary" 
-            onClick={() => deleteTraining(row.value)}>Delete</Button>
+            Cell: row => <Button size="small" color="secondary"
+                onClick={() => deleteTraining(row.value)}>Delete</Button>
         },
     ]
 
@@ -97,6 +125,7 @@ const Trainings = () => {
                 <Typography component="p">
                     Trainings listed.
                 </Typography>
+                <AddTraining saveTraining={saveTraining} />
                 <ReactTable filterable={true} data={trainings} columns={columns} defaultPageSize={10} />
             </Paper>
         </div>
